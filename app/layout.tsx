@@ -3,7 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { Component } from "react";
+import Navbar from "@/components/Navbar";
 
 const FontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -25,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ChakraProvider>{children}</ChakraProvider>
+        <ChakraProvider>
+          <Navbar />
+          {children}
+        </ChakraProvider>
       </body>
     </html>
   );
