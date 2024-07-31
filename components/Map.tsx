@@ -48,7 +48,7 @@ const Map = () => {
         position={position}
         icon={L.divIcon({
           className: "custom-marker",
-          html: `<div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div>`,
+          html: `<p><div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
         })}
       ></Marker>
     ) : null;
@@ -129,7 +129,7 @@ const Map = () => {
               position={loc.position as L.LatLngExpression}
               icon={L.divIcon({
                 className: "custom-marker",
-                html: `<div style="background-color: ${loc.markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div>`,
+                html: `<p><div style="background-color: ${loc.markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
               })}
             />
           ))}

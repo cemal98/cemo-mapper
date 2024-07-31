@@ -16,6 +16,16 @@ const config: Config = {
       },
     },
     extend: {
+      screens: {
+        sm: "320px",
+        sm_md: "600px",
+        md: "740px",
+        md_lg: "1000px",
+        lg: "1200px",
+        lg_xl: "1500px",
+        xl: "1800px",
+        "2xl": "2000px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
