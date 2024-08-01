@@ -28,10 +28,6 @@ body {
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   .custom-popup .leaflet-popup-content-wrapper {
     background-color: #f0f0f0;
     color: #000000;
@@ -49,5 +45,11 @@ body {
     padding: 5px;
     max-height: 200px;
     overflow-y: auto;
+  }
+
+  @media (max-width: 768px) {
+    .leaflet-routing-container-custom {
+      max-height: 100px;
+    }
   }
 }

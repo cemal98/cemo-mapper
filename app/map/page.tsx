@@ -10,7 +10,6 @@ const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const MapView = () => {
   const [locations, setLocations] = useState<any[]>([]);
-  const toast = useToast();
 
   useEffect(() => {
     const storedLocations = localStorage.getItem("locations");

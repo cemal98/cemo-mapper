@@ -6,20 +6,25 @@ import {
   Text,
   IconButton,
   Stack,
-  Collapse,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import { navLinks } from "@/constants";
 
 const Navbar = () => {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box>
+    <Box position="sticky" top="0" zIndex="1000">
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
@@ -37,10 +42,8 @@ const Navbar = () => {
           display={{ base: "flex", md: "none" }}
         >
           <IconButton
-            onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
+            onClick={onOpen}
+            icon={<HamburgerIcon w={5} h={5} />}
             variant={"ghost"}
             aria-label={"Toggle Navigation"}
           />
@@ -54,9 +57,9 @@ const Navbar = () => {
             <Image
               src="/assets/images/logo-icon.webp"
               alt="logo"
-              className="rounded-[30px]"
-              width={30}
-              height={30}
+              className="rounded-[30px] flex items-center"
+              width={35}
+              height={37}
             />
           </Text>
 
@@ -66,9 +69,17 @@ const Navbar = () => {
         </Flex>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
-      </Collapse>
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Navigation</DrawerHeader>
+            <DrawerBody>
+              <MobileNav onClose={onClose} />
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
     </Box>
   );
 };
@@ -103,41 +114,38 @@ const DesktopNav = () => {
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ onClose }: { onClose: () => void }) => {
   return (
-    <Stack
-      bg={useColorModeValue("white", "gray.800")}
-      p={4}
-      display={{ md: "none" }}
-    >
+    <Stack bg={useColorModeValue("white", "gray.800")} display={{ md: "none" }}>
       {navLinks.map((navItem) => (
-        <MobileNavItem key={navItem.label} {...navItem} />
+        <MobileNavItem key={navItem.label} {...navItem} onClose={onClose} />
       ))}
     </Stack>
   );
 };
 
-const MobileNavItem = ({ label, route }: NavItem) => {
-  const { isOpen, onToggle } = useDisclosure();
-
+const MobileNavItem = ({
+  label,
+  route,
+  onClose,
+}: NavItem & { onClose: () => void }) => {
   return (
-    <Stack spacing={4} onClick={onToggle}>
-      <Box
-        py={2}
-        as="a"
-        href={route}
-        justifyContent="space-between"
-        alignItems="center"
-        _hover={{ textDecoration: "none" }}
+    <Box
+      as="a"
+      href={route}
+      justifyContent="space-between"
+      alignItems="center"
+      _hover={{ textDecoration: "none" }}
+      onClick={onClose}
+    >
+      <Text
+        className="py-2 hover:bg-gray-200 hover:rounded-[20px]"
+        fontWeight={600}
+        color={useColorModeValue("gray.600", "gray.200")}
       >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue("gray.600", "gray.200")}
-        >
-          {label}
-        </Text>
-      </Box>
-    </Stack>
+        <span className="truncate px-2">{label}</span>
+      </Text>
+    </Box>
   );
 };
 

@@ -20,7 +20,6 @@ import AddLocationAlert from "@/components/AddLocationAlert";
 
 const LocationListPage = () => {
   const [locations, setLocations] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -94,7 +93,6 @@ const LocationListPage = () => {
                         borderRadius="full"
                         backgroundColor={loc.markerColor}
                         cursor="pointer"
-                        onMouseEnter={() => setSelectedLocation(loc)}
                       />
                     </Tooltip>
                   </Box>
@@ -115,7 +113,7 @@ const LocationListPage = () => {
                       <IconButton
                         icon={<ArrowRightIcon />}
                         aria-label="Edit Location"
-                      ></IconButton>
+                      />
                     </Link>
                   </div>
                 </Grid>
