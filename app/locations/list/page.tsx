@@ -16,6 +16,7 @@ import {
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { getContrastingColor } from "@/config/helper";
+import AddLocationAlert from "@/components/AddLocationAlert";
 
 const LocationListPage = () => {
   const [locations, setLocations] = useState<any[]>([]);
@@ -54,12 +55,7 @@ const LocationListPage = () => {
     <Box p={4}>
       <Heading mb={4}>List Locations</Heading>
       {locations.length === 0 ? (
-        <Box width="fit-content">
-          <Alert status="info" mb={4} width="fit-content">
-            <AlertIcon />
-            No saved locations. Please add a location.
-          </Alert>
-        </Box>
+        <AddLocationAlert />
       ) : (
         <Grid
           className="md:!grid !flex flex-col-reverse"

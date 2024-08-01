@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { getContrastingColor } from "@/config/helper";
+import AddLocationAlert from "@/components/AddLocationAlert";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -78,12 +79,7 @@ const EditLocationPage = () => {
     <Box p={4}>
       <Heading mb={4}>Edit Locations</Heading>
       {locations.length === 0 ? (
-        <Box width="fit-content">
-          <Alert status="info" mb={4} width="fit-content">
-            <AlertIcon />
-            No locations to edit.
-          </Alert>
-        </Box>
+        <AddLocationAlert />
       ) : (
         <>
           <Box mb={4}>

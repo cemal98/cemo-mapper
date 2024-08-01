@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import L, { LatLngExpression } from "leaflet";
+import "leaflet-routing-machine";
 import { v4 as uuidv4 } from "uuid";
 import {
   MapContainer,
@@ -7,8 +8,19 @@ import {
   Marker,
   useMapEvents,
   useMap,
+  Popup,
 } from "react-leaflet";
 import { Box, Input, Button, HStack, VStack, useToast } from "@chakra-ui/react";
+
+// User icon properties
+const userIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  shadowSize: [41, 41],
+});
 
 const defaultPosition: LatLngExpression = [39.9334, 32.8597];
 
@@ -16,10 +28,12 @@ const Map = ({
   mode,
   location,
   onEdit,
+  locations = [],
 }: {
   mode: string;
   location?: any;
   onEdit?: (location: any) => void;
+  locations?: any[];
 }) => {
   const [position, setPosition] = useState<LatLngExpression | null>(null);
   const [userPosition, setUserPosition] =
@@ -28,6 +42,9 @@ const Map = ({
   const [markerColor, setMarkerColor] = useState("#000000");
   const [savedLocations, setSavedLocations] = useState<any[]>([]);
   const [initialLocationData, setInitialLocationData] = useState<any | null>(
+    null
+  );
+  const [routeControl, setRouteControl] = useState<L.Routing.Control | null>(
     null
   );
   const toast = useToast();
@@ -56,6 +73,11 @@ const Map = ({
   }, [mode, location]);
 
   const LocationMarker = () => {
+    const map = useMap();
+    const [routeControl, setRouteControl] = useState<L.Routing.Control | null>(
+      null
+    );
+
     useMapEvents({
       click(e) {
         if (mode === "add") {
@@ -64,26 +86,82 @@ const Map = ({
       },
     });
 
-    return position ? (
-      <Marker
-        position={position}
-        draggable={mode === "edit"}
-        icon={L.divIcon({
-          className: "custom-marker",
-          html: `<p><div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
-        })}
-        eventHandlers={
-          mode === "edit"
-            ? {
-                dragend: (e) => {
-                  const { lat, lng } = e.target.getLatLng();
-                  setPosition([lat, lng] as LatLngExpression);
+    return (
+      <>
+        {mode === "view" &&
+          locations.map((loc) => (
+            <Marker
+              key={loc.id}
+              position={loc.position as LatLngExpression}
+              icon={L.divIcon({
+                className: "custom-marker",
+                html: `<p><div style="background-color: ${loc.markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
+              })}
+              eventHandlers={{
+                click: () => {
+                  // Clear previous route
+                  if (routeControl) {
+                    map.removeControl(routeControl);
+                    setRouteControl(null);
+                  }
+
+                  // Draw new route
+                  const newRoute = L.Routing.control({
+                    waypoints: [L.latLng(userPosition), L.latLng(loc.position)],
+                    routeWhileDragging: true,
+                    createMarker: () => null,
+                    containerClassName: "leaflet-routing-container-custom",
+                    lineOptions: {
+                      extendToWaypoints: true,
+                      missingRouteTolerance: 5,
+                      styles: [
+                        {
+                          color: loc.markerColor,
+                          weight: 5,
+                          opacity: 0.7,
+                        },
+                      ],
+                    },
+                  }).addTo(map);
+
+                  setRouteControl(newRoute);
                 },
-              }
-            : undefined
-        }
-      />
-    ) : null;
+              }}
+            >
+              <Popup className="custom-popup">
+                <div>
+                  Coordinates: {loc.position.lat.toFixed(2)},{" "}
+                  {loc.position.lng.toFixed(2)}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+        {position && mode !== "view" && (
+          <Marker
+            position={position}
+            draggable={mode === "edit"}
+            icon={L.divIcon({
+              className: "custom-marker",
+              html: `<p><div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
+            })}
+            eventHandlers={
+              mode === "edit"
+                ? {
+                    dragend: (e) => {
+                      const { lat, lng } = e.target.getLatLng();
+                      setPosition([lat, lng] as LatLngExpression);
+                    },
+                  }
+                : undefined
+            }
+          />
+        )}
+        {mode === "view" && userPosition && (
+          <Marker position={userPosition} icon={userIcon} />
+        )}
+      </>
+    );
   };
 
   const handleSaveLocation = () => {

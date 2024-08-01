@@ -77,7 +77,11 @@ const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   return (
-    <Stack direction={"row"} spacing={4}>
+    <Stack
+      direction={"row"}
+      className="justify-center flex lg:w-[1200px]"
+      spacing={4}
+    >
       {navLinks.map((navItem, idx) => (
         <Box
           as="a"
