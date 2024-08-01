@@ -1,24 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Heading,
-  Text,
-  useToast,
-  Alert,
-  AlertIcon,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Heading, Text, useToast, Button } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { getContrastingColor } from "@/config/helper";
+import { getContrastingColor, isLatLngTuple } from "@/config/helper";
 import AddLocationAlert from "@/components/AddLocationAlert";
+import { Mode } from "@/constants/enum";
+import { Location } from "@/shared/interfaces/location.interface";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const EditLocationPage = () => {
-  const [locations, setLocations] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
   const toast = useToast();
 
   useEffect(() => {
@@ -36,11 +32,7 @@ const EditLocationPage = () => {
     }
   }, [toast]);
 
-  const handleLocationSelect = (location: any) => {
-    setSelectedLocation(location);
-  };
-
-  const handleLocationEdit = (updatedLocation: any) => {
+  const handleLocationEdit = (updatedLocation: Partial<Location>) => {
     if (selectedLocation) {
       const updatedData = {
         locationName:
@@ -48,10 +40,12 @@ const EditLocationPage = () => {
         markerColor:
           updatedLocation.markerColor || selectedLocation.markerColor,
         position: updatedLocation.position
-          ? {
-              lat: updatedLocation.position[0],
-              lng: updatedLocation.position[1],
-            }
+          ? isLatLngTuple(updatedLocation.position)
+            ? {
+                lat: updatedLocation.position[0],
+                lng: updatedLocation.position[1],
+              }
+            : selectedLocation.position
           : selectedLocation.position,
       };
 
@@ -83,10 +77,13 @@ const EditLocationPage = () => {
       ) : (
         <>
           <Box mb={4}>
-            {locations.map((loc, index) => (
+            {locations.map((loc) => (
               <Button
-                key={index}
-                onClick={() => handleLocationSelect(loc)}
+                overflow={"hidden"}
+                whiteSpace={"nowrap"}
+                className="lg:!w-[140px] !w-[100px]"
+                key={loc.id}
+                onClick={() => setSelectedLocation(loc)}
                 m={1}
                 color={getContrastingColor(loc.markerColor)}
                 bg={loc.markerColor}
@@ -94,13 +91,13 @@ const EditLocationPage = () => {
                   bg: selectedLocation === loc ? loc.markerColor : "gray.300",
                 }}
               >
-                {loc.locationName}
+                <span className="truncate">{loc.locationName}</span>
               </Button>
             ))}
           </Box>
           {selectedLocation ? (
             <DynamicMap
-              mode="edit"
+              mode={Mode.Edit}
               location={selectedLocation}
               onEdit={handleLocationEdit}
             />

@@ -1,3 +1,5 @@
+import { LatLng, LatLngExpression, LatLngTuple } from "leaflet";
+
 export const getContrastingColor = (color: string) => {
   // Remove the '#' character if it exists
   const hex = color.replace("#", "");
@@ -12,4 +14,18 @@ export const getContrastingColor = (color: string) => {
 
   // Return black or white depending on the brightness
   return brightness > 128 ? "black" : "white";
+};
+
+// Type guard
+export const isLatLngTuple = (
+  position: LatLngExpression
+): position is LatLngTuple => {
+  return Array.isArray(position) && position.length === 2;
+};
+
+export const isLatLng = (position: LatLngExpression): position is LatLng => {
+  return (
+    (position as LatLng).lat !== undefined &&
+    (position as LatLng).lng !== undefined
+  );
 };

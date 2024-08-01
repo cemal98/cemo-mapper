@@ -57,16 +57,7 @@ const LocationListPage = () => {
       {locations.length === 0 ? (
         <AddLocationAlert />
       ) : (
-        <Grid
-          className="md:!grid !flex flex-col-reverse"
-          templateRows={selectedLocation ? "1fr auto" : "repeat(2, 1fr)"}
-          templateColumns={
-            selectedLocation ? { base: "1fr", md: "4fr 2fr" } : "1fr"
-          }
-          gap={4}
-          p={4}
-          overflow="hidden"
-        >
+        <Grid gap={4} p={4} overflow="hidden">
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
             {locations.map((loc, idx) => (
               <Box
