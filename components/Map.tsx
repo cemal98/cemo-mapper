@@ -123,16 +123,6 @@ const Map = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <LocationMarker />
           {userPosition && <ResetCenterView center={userPosition} />}
-          {savedLocations.map((loc, idx) => (
-            <Marker
-              key={idx}
-              position={loc.position as L.LatLngExpression}
-              icon={L.divIcon({
-                className: "custom-marker",
-                html: `<p><div style="background-color: ${loc.markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
-              })}
-            />
-          ))}
         </MapContainer>
       </Box>
       <HStack spacing={4} align="center" wrap="wrap" justify="space-between">

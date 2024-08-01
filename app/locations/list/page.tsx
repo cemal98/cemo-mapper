@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -9,9 +9,13 @@ import {
   Button,
   useToast,
   IconButton,
+  Tooltip,
+  AlertIcon,
+  Alert,
 } from "@chakra-ui/react";
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
+import { getContrastingColor } from "@/config/helper";
 
 const LocationListPage = () => {
   const [locations, setLocations] = useState<any[]>([]);
@@ -49,110 +53,98 @@ const LocationListPage = () => {
   return (
     <Box p={4}>
       <Heading mb={4}>List Locations</Heading>
-      <Grid
-        className="md:!grid !flex flex-col-reverse"
-        templateRows={selectedLocation ? "1fr auto" : "repeat(2, 1fr)"}
-        templateColumns={
-          selectedLocation ? { base: "1fr", md: "4fr 2fr" } : "1fr"
-        }
-        gap={4}
-        p={4}
-        overflow="hidden"
-      >
-        <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
-          {locations.map((loc, idx) => (
-            <Box
-              key={idx}
-              p={4}
-              borderWidth={1}
-              borderRadius="md"
-              boxShadow="md"
-            >
-              <Text fontSize="lg" fontWeight="bold">
-                <Box
-                  display="flex"
-                  gap={3}
-                  className="h-[80px]"
-                  overflow="hidden"
-                  whiteSpace="nowrap"
-                >
-                  <Text flex="1" isTruncated>
-                    {loc.locationName}
-                  </Text>
+      {locations.length === 0 ? (
+        <Box width="fit-content">
+          <Alert status="info" mb={4} width="fit-content">
+            <AlertIcon />
+            No saved locations. Please add a location.
+          </Alert>
+        </Box>
+      ) : (
+        <Grid
+          className="md:!grid !flex flex-col-reverse"
+          templateRows={selectedLocation ? "1fr auto" : "repeat(2, 1fr)"}
+          templateColumns={
+            selectedLocation ? { base: "1fr", md: "4fr 2fr" } : "1fr"
+          }
+          gap={4}
+          p={4}
+          overflow="hidden"
+        >
+          <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
+            {locations.map((loc, idx) => (
+              <Box
+                key={idx}
+                p={4}
+                borderWidth={1}
+                borderRadius="md"
+                boxShadow="md"
+              >
+                <Text fontSize="lg" fontWeight="bold">
                   <Box
-                    width="20px"
-                    height="20px"
-                    onClick={() => setSelectedLocation(loc)}
-                    cursor={"pointer"}
-                    borderRadius="full"
-                    backgroundColor={loc.markerColor}
-                  />
-                </Box>
-              </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <Button
-                  mt={2}
-                  colorScheme="red"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteLocation(idx);
-                  }}
-                >
-                  <Text className="lg:text-[14px] text-[12px]">Delete</Text>
-                </Button>
-                <div className="flex justify-end items-center">
-                  <Link href={`/locations/edit/`}>
-                    <IconButton
-                      icon={<ArrowRightIcon />}
-                      aria-label="Edit Location"
-                    ></IconButton>
-                  </Link>
-                </div>
-              </Grid>
-            </Box>
-          ))}
-        </Grid>
-        {selectedLocation && (
-          <Box
-            p={4}
-            borderWidth={1}
-            height={"162px"}
-            borderRadius="md"
-            boxShadow="md"
-            overflowY="auto"
-          >
-            <Text fontSize="xl" mb={4}>
-              Location Details
-            </Text>
-            <Text fontSize="lg" fontWeight="bold">
-              {selectedLocation.locationName}
-            </Text>
-            {selectedLocation.position ? (
-              <>
-                <Text fontSize="md">
-                  Coordinates: {selectedLocation.position.lat.toFixed(2)},{" "}
-                  {selectedLocation.position.lng.toFixed(2)}
+                    display="flex"
+                    gap={3}
+                    className="h-[80px]"
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                  >
+                    <Text flex="1" isTruncated>
+                      {loc.locationName}
+                    </Text>
+                    <Tooltip
+                      background={loc.markerColor}
+                      color={getContrastingColor(loc.markerColor)}
+                      label={
+                        <>
+                          {loc.position ? (
+                            <>
+                              Coordinates: {loc.position.lat.toFixed(2)},{" "}
+                              {loc.position.lng.toFixed(2)}
+                            </>
+                          ) : (
+                            "Invalid coordinates"
+                          )}
+                        </>
+                      }
+                      placement="right"
+                      hasArrow
+                    >
+                      <Box
+                        width="20px"
+                        height="20px"
+                        borderRadius="full"
+                        backgroundColor={loc.markerColor}
+                        cursor="pointer"
+                        onMouseEnter={() => setSelectedLocation(loc)}
+                      />
+                    </Tooltip>
+                  </Box>
                 </Text>
-                <Text fontSize="md" color={selectedLocation.markerColor}>
-                  <div className="flex gap-3 items-center">
-                    Marker Color:{" "}
-                    <Box
-                      width="20px"
-                      height="20px"
-                      borderRadius="full"
-                      backgroundColor={selectedLocation.markerColor}
-                    />
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Button
+                    mt={2}
+                    colorScheme="red"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteLocation(idx);
+                    }}
+                  >
+                    <Text className="lg:text-[14px] text-[12px]">Delete</Text>
+                  </Button>
+                  <div className="flex justify-end items-center">
+                    <Link href={`/locations/edit/`}>
+                      <IconButton
+                        icon={<ArrowRightIcon />}
+                        aria-label="Edit Location"
+                      ></IconButton>
+                    </Link>
                   </div>
-                </Text>
-              </>
-            ) : (
-              <Text fontSize="md" color="red.500">
-                Invalid coordinates
-              </Text>
-            )}
-          </Box>
-        )}
-      </Grid>
+                </Grid>
+              </Box>
+            ))}
+          </Grid>
+        </Grid>
+      )}
     </Box>
   );
 };
