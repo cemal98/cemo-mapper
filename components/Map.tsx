@@ -79,7 +79,7 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
       const newRoute = L.Routing.control({
         waypoints: [L.latLng(userPosition), L.latLng(loc.position)],
         routeWhileDragging: true,
-        createMarker: () => null,
+        // createMarker: () => null,
         containerClassName: "leaflet-routing-container-custom",
         lineOptions: {
           extendToWaypoints: true,
