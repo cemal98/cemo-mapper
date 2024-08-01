@@ -1,25 +1,35 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
+import L, { LatLngExpression } from "leaflet";
+import { v4 as uuidv4 } from "uuid";
 import {
   MapContainer,
   TileLayer,
   Marker,
-  useMap,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
-import { Box, Input, Button, VStack, HStack, useToast } from "@chakra-ui/react";
-import L from "leaflet";
+import { Box, Input, Button, HStack, VStack, useToast } from "@chakra-ui/react";
 
-const defaultPosition: L.LatLngExpression = [39.9334, 32.8597];
+const defaultPosition: LatLngExpression = [39.9334, 32.8597];
 
-const Map = () => {
-  const [position, setPosition] = useState<L.LatLngExpression | null>(null);
+const Map = ({
+  mode,
+  location,
+  onEdit,
+}: {
+  mode: string;
+  location?: any;
+  onEdit?: (location: any) => void;
+}) => {
+  const [position, setPosition] = useState<LatLngExpression | null>(null);
   const [userPosition, setUserPosition] =
-    useState<L.LatLngExpression>(defaultPosition);
+    useState<LatLngExpression>(defaultPosition);
   const [locationName, setLocationName] = useState("");
   const [markerColor, setMarkerColor] = useState("#000000");
   const [savedLocations, setSavedLocations] = useState<any[]>([]);
+  const [initialLocationData, setInitialLocationData] = useState<any | null>(
+    null
+  );
   const toast = useToast();
 
   useEffect(() => {
@@ -36,21 +46,43 @@ const Map = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (mode === "edit" && location) {
+      setPosition(location.position as LatLngExpression);
+      setLocationName(location.locationName);
+      setMarkerColor(location.markerColor);
+      setInitialLocationData(location);
+    }
+  }, [mode, location]);
+
   const LocationMarker = () => {
     useMapEvents({
       click(e) {
-        setPosition(e.latlng);
+        if (mode === "add") {
+          setPosition(e.latlng);
+        }
       },
     });
 
     return position ? (
       <Marker
         position={position}
+        draggable={mode === "edit"}
         icon={L.divIcon({
           className: "custom-marker",
           html: `<p><div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%;"></div></p>`,
         })}
-      ></Marker>
+        eventHandlers={
+          mode === "edit"
+            ? {
+                dragend: (e) => {
+                  const { lat, lng } = e.target.getLatLng();
+                  setPosition([lat, lng] as LatLngExpression);
+                },
+              }
+            : undefined
+        }
+      />
     ) : null;
   };
 
@@ -66,50 +98,64 @@ const Map = () => {
       return;
     }
 
-    // Convert position to a more specific type
     const positionArray = position as [number, number];
-
-    // Check if the location already exists
-    const locationExists = savedLocations.some(
-      (loc) =>
-        loc.position[0] === positionArray[0] &&
-        loc.position[1] === positionArray[1] &&
-        loc.locationName === locationName
-    );
-
-    if (locationExists) {
-      toast({
-        title: "Location Exists",
-        description:
-          "This location already exists. Please select a different location.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+    const id = mode === "add" ? uuidv4() : initialLocationData?.id || "";
 
     const locationData = {
+      id,
       position: positionArray,
       locationName,
       markerColor,
     };
 
-    const updatedLocations = [...savedLocations, locationData];
-    setSavedLocations(updatedLocations);
-    localStorage.setItem("locations", JSON.stringify(updatedLocations));
+    if (mode === "edit" && location) {
+      // Update the existing location
+      const updatedLocations = savedLocations.map((loc) =>
+        loc.id === location.id ? locationData : loc
+      );
+      setSavedLocations(updatedLocations);
+      localStorage.setItem("locations", JSON.stringify(updatedLocations));
 
-    toast({
-      title: "Success",
-      description: "Location saved successfully!",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+      toast({
+        title: "Success",
+        description: "Location updated successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (mode === "add") {
+      // Add new location
+      const updatedLocations = [...savedLocations, locationData];
+      setSavedLocations(updatedLocations);
+      localStorage.setItem("locations", JSON.stringify(updatedLocations));
+
+      toast({
+        title: "Success",
+        description: "Location saved successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
 
     setLocationName("");
     setMarkerColor("#000000");
     setPosition(null);
+
+    if (onEdit) {
+      onEdit(locationData);
+    }
+  };
+
+  const isSaveButtonDisabled = () => {
+    if (mode === "edit" && initialLocationData) {
+      return (
+        position?.toString() === initialLocationData.position.toString() &&
+        locationName === initialLocationData.locationName &&
+        markerColor === initialLocationData.markerColor
+      );
+    }
+    return false;
   };
 
   return (
@@ -125,30 +171,37 @@ const Map = () => {
           {userPosition && <ResetCenterView center={userPosition} />}
         </MapContainer>
       </Box>
-      <HStack spacing={4} align="center" wrap="wrap" justify="space-between">
-        <Input
-          placeholder="Location Name"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          width={{ base: "100%", md: "auto" }}
-          flex={1}
-        />
-        <HStack spacing={4}>
+      {(mode === "add" || mode === "edit") && (
+        <HStack spacing={4} align="center" wrap="wrap" justify="space-between">
           <Input
-            type="color"
-            value={markerColor}
-            onChange={(e) => setMarkerColor(e.target.value)}
-            width="50px"
-            className="!p-1"
+            placeholder="Location Name"
+            value={locationName}
+            onChange={(e) => setLocationName(e.target.value)}
+            width={{ base: "100%", md: "auto" }}
+            flex={1}
           />
-          <Button onClick={handleSaveLocation}>Save Location</Button>
+          <HStack spacing={4}>
+            <Input
+              type="color"
+              value={markerColor}
+              onChange={(e) => setMarkerColor(e.target.value)}
+              width="50px"
+              className="!p-1"
+            />
+            <Button
+              onClick={handleSaveLocation}
+              isDisabled={isSaveButtonDisabled()}
+            >
+              {mode === "add" ? "Save Location" : "Update Location"}
+            </Button>
+          </HStack>
         </HStack>
-      </HStack>
+      )}
     </VStack>
   );
 };
 
-const ResetCenterView = ({ center }: { center: L.LatLngExpression }) => {
+const ResetCenterView = ({ center }: { center: LatLngExpression }) => {
   const map = useMap();
   useEffect(() => {
     map.setView(center);

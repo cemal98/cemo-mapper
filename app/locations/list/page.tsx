@@ -74,7 +74,7 @@ const LocationListPage = () => {
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
             {locations.map((loc, idx) => (
               <Box
-                key={idx}
+                key={loc.id}
                 p={4}
                 borderWidth={1}
                 borderRadius="md"
@@ -98,8 +98,8 @@ const LocationListPage = () => {
                         <>
                           {loc.position ? (
                             <>
-                              Coordinates: {loc.position.lat.toFixed(2)},{" "}
-                              {loc.position.lng.toFixed(2)}
+                              Coordinates: {loc.position.lat?.toFixed(2)},{" "}
+                              {loc.position.lng?.toFixed(2)}
                             </>
                           ) : (
                             "Invalid coordinates"
@@ -132,7 +132,7 @@ const LocationListPage = () => {
                     <Text className="lg:text-[14px] text-[12px]">Delete</Text>
                   </Button>
                   <div className="flex justify-end items-center">
-                    <Link href={`/locations/edit/`}>
+                    <Link href={`/locations/edit/${loc.id}`}>
                       <IconButton
                         icon={<ArrowRightIcon />}
                         aria-label="Edit Location"
