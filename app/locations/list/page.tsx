@@ -27,14 +27,6 @@ const LocationListPage = () => {
     const storedLocations = localStorage.getItem("locations");
     if (storedLocations) {
       setLocations(JSON.parse(storedLocations));
-    } else {
-      toast({
-        title: "No Locations Found",
-        description: "There are no locations saved.",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   }, []);
 

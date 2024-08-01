@@ -17,8 +17,9 @@ import {
 } from "@/shared/interfaces/map.interface";
 import { Mode } from "@/constants/enum";
 import { Location } from "@/shared/interfaces/location.interface";
-import { userIcon } from "@/constants";
 import { isLatLng } from "@/config/helper";
+import { FaMapMarker } from "react-icons/fa";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const defaultPosition: LatLngExpression = [39.9334, 32.8597];
 
@@ -32,6 +33,9 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
   const [initialLocationData, setInitialLocationData] =
     useState<Location | null>(null);
   const toast = useToast();
+  const iconSvg = renderToStaticMarkup(
+    <FaMapMarker size={30} color="#ff5722" />
+  );
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -141,7 +145,15 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
           />
         )}
         {mode === Mode.View && userPosition && (
-          <Marker position={userPosition} icon={userIcon} />
+          <Marker
+            position={userPosition}
+            icon={L.divIcon({
+              className: "custom-icon",
+              html: iconSvg,
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+            })}
+          />
         )}
       </>
     );
