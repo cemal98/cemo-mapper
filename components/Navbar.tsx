@@ -48,9 +48,12 @@ const Navbar = () => {
             aria-label={"Toggle Navigation"}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+        <Flex
+          flex={{ base: 1 }}
+          justify={{ base: "end", md: "start", sm: "end" }}
+        >
           <Text
-            textAlign={useBreakpointValue({ base: "center", md: "left" })}
+            textAlign={useBreakpointValue({ base: "end", md: "left" })}
             fontFamily={"heading"}
             color={useColorModeValue("gray.800", "white")}
           >
