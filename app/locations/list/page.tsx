@@ -10,12 +10,10 @@ import {
   useToast,
   IconButton,
   Tooltip,
-  AlertIcon,
-  Alert,
 } from "@chakra-ui/react";
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
-import { getContrastingColor } from "@/config/helper";
+import { getContrastingColor } from "../../../config/helper";
 import AddLocationAlert from "@/components/AddLocationAlert";
 
 const LocationListPage = () => {
@@ -58,7 +56,7 @@ const LocationListPage = () => {
                 borderRadius="md"
                 boxShadow="md"
               >
-                <Text fontSize="lg" fontWeight="bold">
+                <Box fontSize="lg" fontWeight="bold">
                   <Box
                     display="flex"
                     gap={3}
@@ -96,7 +94,7 @@ const LocationListPage = () => {
                       />
                     </Tooltip>
                   </Box>
-                </Text>
+                </Box>
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   <Button
                     mt={2}
@@ -108,14 +106,18 @@ const LocationListPage = () => {
                   >
                     <Text className="lg:text-[14px] text-[12px]">Delete</Text>
                   </Button>
-                  <div className="flex justify-end items-center">
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
                     <Link href={`/locations/edit/${loc.id}`}>
                       <IconButton
                         icon={<ArrowRightIcon />}
                         aria-label="Edit Location"
                       />
                     </Link>
-                  </div>
+                  </Box>
                 </Grid>
               </Box>
             ))}

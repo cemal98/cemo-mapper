@@ -4,9 +4,9 @@ import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Alert, AlertIcon, Box, Heading, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { Mode } from "@/constants/enum";
+import { Mode } from "../../../../constants/enum";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import useLocations from "@/hooks/UseLocation";
+import useLocations from "../../../../hooks/UseLocation";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 

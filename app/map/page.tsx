@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Box, Heading, useToast } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import { Mode } from "@/constants/enum";
+import { Mode } from "../../constants/enum";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 

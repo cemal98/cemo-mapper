@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import React from "react";
 import { Box, Heading } from "@chakra-ui/react";
-import { Mode } from "@/constants/enum";
+import { Mode } from "../../../constants/enum";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 

@@ -3,11 +3,11 @@
 import React from "react";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { getContrastingColor } from "@/config/helper";
+import { getContrastingColor } from "../../../config/helper";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import { Mode } from "@/constants/enum";
+import { Mode } from "../../../constants/enum";
 import Link from "next/link";
-import useLocations from "@/hooks/UseLocation";
+import useLocations from "../../../hooks/UseLocation";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 

@@ -19,12 +19,10 @@ const Home = () => {
     >
       <div className="absolute inset-0">
         <Image
-          className="object-cover "
+          className="object-cover"
           src="/assets/images/map.webp"
           alt="map"
-          layout="fill"
-          objectFit="cover"
-          style={{ zIndex: -1 }}
+          fill
         />
       </div>
 
