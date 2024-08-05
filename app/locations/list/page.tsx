@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Heading,
@@ -13,24 +13,17 @@ import {
 } from "@chakra-ui/react";
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
-import { getContrastingColor } from "../../../config/helper";
+import { getContrastingColor } from "@/utils/helpers/color.helper";
 import AddLocationAlert from "@/components/AddLocationAlert";
+import useLocationsContext from "@/contexts/useLocationContext";
+import { isLatLng } from "@/utils/helpers/type.helper";
 
 const LocationListPage = () => {
-  const [locations, setLocations] = useState<any[]>([]);
+  const { locations, deleteLocation } = useLocationsContext();
   const toast = useToast();
 
-  useEffect(() => {
-    const storedLocations = localStorage.getItem("locations");
-    if (storedLocations) {
-      setLocations(JSON.parse(storedLocations));
-    }
-  }, []);
-
-  const handleDeleteLocation = (index: number) => {
-    const updatedLocations = locations.filter((_, i) => i !== index);
-    setLocations(updatedLocations);
-    localStorage.setItem("locations", JSON.stringify(updatedLocations));
+  const handleDeleteLocation = (id: string) => {
+    deleteLocation(id);
     toast({
       title: "Location Deleted",
       description: "The location has been removed.",
@@ -48,7 +41,7 @@ const LocationListPage = () => {
       ) : (
         <Grid gap={4} p={4} overflow="hidden">
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={4}>
-            {locations.map((loc, idx) => (
+            {locations.map((loc) => (
               <Box
                 key={loc.id}
                 p={4}
@@ -72,14 +65,17 @@ const LocationListPage = () => {
                       color={getContrastingColor(loc.markerColor)}
                       label={
                         <>
-                          {loc.position ? (
-                            <>
-                              Coordinates: {loc.position.lat?.toFixed(2)},{" "}
-                              {loc.position.lng?.toFixed(2)}
-                            </>
-                          ) : (
-                            "Invalid coordinates"
-                          )}
+                          <div className="flex gap-1">
+                            <Text>Coordinates:</Text>
+                            {isLatLng(loc.position) ? (
+                              <>
+                                <Text>{loc.position.lat.toFixed(2)}</Text>
+                                <Text>,{loc.position.lng.toFixed(2)}</Text>
+                              </>
+                            ) : (
+                              <Text>Invalid coordinates</Text>
+                            )}
+                          </div>
                         </>
                       }
                       placement="right"
@@ -97,27 +93,22 @@ const LocationListPage = () => {
                 </Box>
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   <Button
-                    mt={2}
                     colorScheme="red"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteLocation(idx);
+                      handleDeleteLocation(loc.id);
                     }}
                   >
                     <Text className="lg:text-[14px] text-[12px]">Delete</Text>
                   </Button>
-                  <Box
-                    display="flex"
-                    justifyContent="flex-end"
-                    alignItems="center"
-                  >
+                  <div className="flex justify-end items-center">
                     <Link href={`/locations/edit/${loc.id}`}>
                       <IconButton
                         icon={<ArrowRightIcon />}
                         aria-label="Edit Location"
                       />
                     </Link>
-                  </Box>
+                  </div>
                 </Grid>
               </Box>
             ))}

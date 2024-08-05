@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Heading } from "@chakra-ui/react";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import { Mode } from "../../constants/enum";
+import { Mode } from "@/types/enums/enum";
+import { Location } from "@/types/interfaces/location.interface";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const MapView = () => {
-  const [locations, setLocations] = useState<any[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
     const storedLocations = localStorage.getItem("locations");

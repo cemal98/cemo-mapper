@@ -4,16 +4,16 @@ import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Alert, AlertIcon, Box, Heading, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { Mode } from "../../../../constants/enum";
+import { Mode } from "@/types/enums/enum";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import useLocations from "../../../../hooks/UseLocation";
+import useLocationsContext from "@/contexts/useLocationContext";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const EditItem = () => {
   const { id } = useParams();
   const { locations, selectedLocation, setSelectedLocation, updateLocation } =
-    useLocations();
+    useLocationsContext();
 
   useEffect(() => {
     if (id && locations.length > 0) {
@@ -22,7 +22,7 @@ const EditItem = () => {
         setSelectedLocation(location);
       }
     }
-  }, [id, locations]);
+  }, [id, locations, setSelectedLocation]);
 
   return (
     <Box p={4}>

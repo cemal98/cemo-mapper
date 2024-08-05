@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import MapView from "../../app/map/page";
+import MapView from "@/app/map/page";
 import "@testing-library/jest-dom";
 
 jest.mock("@/components/Map", () => () => <div>Map Component</div>);

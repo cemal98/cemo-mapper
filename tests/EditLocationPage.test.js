@@ -1,24 +1,24 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import EditLocationPage from "../../app/locations/edit/page";
-import useLocations from "../../hooks/UseLocation";
-import { getContrastingColor } from "../../config/helper";
+import { render, screen, waitFor } from "@testing-library/react";
+import EditLocationPage from "@/app/locations/edit/page";
+import useLocationsContext from "@/contexts/useLocationContext";
+import { getContrastingColor } from "@/utils/helpers/color.helper";
 
 jest.mock("@/components/Map", () => () => <div>Map Component</div>);
 jest.mock("@/components/AddLocationAlert", () => () => (
   <div>Add Location Alert</div>
 ));
-jest.mock("../../hooks/UseLocation", () => ({
+jest.mock("@/contexts/useLocationContext", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock("../../config/helper", () => ({
+jest.mock("@/utils/helpers/color.helper", () => ({
   getContrastingColor: jest.fn(),
 }));
 
 describe("EditLocationPage", () => {
   beforeEach(() => {
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [
         { id: "1", locationName: "Location 1", markerColor: "#ff0000" },
         { id: "2", locationName: "Location 2", markerColor: "#00ff00" },
@@ -31,7 +31,7 @@ describe("EditLocationPage", () => {
   });
 
   it("should render the EditLocationPage component with AddLocationAlert when locations are empty", () => {
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [],
       selectedLocation: null,
       setSelectedLocation: jest.fn(),
@@ -51,7 +51,7 @@ describe("EditLocationPage", () => {
   });
 
   it("should render DynamicMap when a location is selected", async () => {
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [
         { id: "1", locationName: "Location 1", markerColor: "#ff0000" },
       ],

@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
+import { LocationsProvider } from "@/contexts/LocationsContext";
 
 const FontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -26,8 +27,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={FontSans.className}>
         <ChakraProvider>
-          <Navbar />
-          {children}
+          <LocationsProvider>
+            <Navbar />
+            {children}
+          </LocationsProvider>
         </ChakraProvider>
       </body>
     </html>

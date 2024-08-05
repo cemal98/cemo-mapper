@@ -1,14 +1,14 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import EditItem from "../../app/locations/edit/[id]/page";
+import EditItem from "../app/locations/edit/[id]/page";
 import "@testing-library/jest-dom";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import useLocations from "../../hooks/UseLocation";
+import useLocationsContext from "../contexts/useLocationContext";
 import { useParams } from "next/navigation";
 
 jest.mock("@/components/Map", () => () => <div>DynamicMap Component</div>);
 
-jest.mock("../../hooks/UseLocation", () => ({
+jest.mock("../contexts/useLocationContext", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
@@ -25,7 +25,7 @@ describe("EditItem", () => {
   it("should render AddLocationAlert when no locations are present", async () => {
     useParams.mockReturnValue({ id: "1" });
 
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [],
       selectedLocation: null,
       setSelectedLocation: jest.fn(),
@@ -50,7 +50,7 @@ describe("EditItem", () => {
   it("should render DynamicMap when a location is present", async () => {
     useParams.mockReturnValue({ id: "1" });
 
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [
         {
           id: "1",
@@ -85,7 +85,7 @@ describe("EditItem", () => {
   it("should display the alert message when location is selected", async () => {
     useParams.mockReturnValue({ id: "1" });
 
-    useLocations.mockReturnValue({
+    useLocationsContext.mockReturnValue({
       locations: [
         {
           id: "1",

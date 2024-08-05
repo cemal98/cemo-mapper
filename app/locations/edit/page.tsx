@@ -3,17 +3,17 @@
 import React from "react";
 import { Box, Heading, Text, Button } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { getContrastingColor } from "../../../config/helper";
+import { getContrastingColor } from "@/utils/helpers/color.helper";
 import AddLocationAlert from "@/components/AddLocationAlert";
-import { Mode } from "../../../constants/enum";
+import { Mode } from "@/types/enums/enum";
 import Link from "next/link";
-import useLocations from "../../../hooks/UseLocation";
+import useLocationsContext from "@/contexts/useLocationContext";
 
 const DynamicMap = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const EditLocationPage = () => {
   const { locations, selectedLocation, setSelectedLocation, updateLocation } =
-    useLocations();
+    useLocationsContext();
 
   return (
     <Box p={4}>
@@ -24,19 +24,18 @@ const EditLocationPage = () => {
         <>
           <Box mb={4}>
             {locations.map((loc) => (
-              <Link href={`/locations/edit/${loc.id}`} key={loc.id}>
+              <Link href={`/locations/edit/${loc.id}`} key={loc.id} passHref>
                 <Button
-                  overflow={"hidden"}
-                  whiteSpace={"nowrap"}
-                  className="lg:!w-[140px] !w-[100px]"
-                  key={loc.id}
-                  onClick={() => setSelectedLocation(loc)}
+                  overflow="hidden"
+                  whiteSpace="nowrap"
                   m={1}
                   color={getContrastingColor(loc.markerColor)}
                   bg={loc.markerColor}
                   _hover={{
                     bg: selectedLocation === loc ? loc.markerColor : "gray.300",
                   }}
+                  onClick={() => setSelectedLocation(loc)}
+                  aria-label={`Edit location ${loc.locationName}`}
                 >
                   <span className="truncate">{loc.locationName}</span>
                 </Button>

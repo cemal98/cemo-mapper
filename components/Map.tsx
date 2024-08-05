@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import L, { LatLngExpression } from "leaflet";
+import React, { useEffect } from "react";
+import L from "leaflet";
 import "leaflet-routing-machine";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -14,57 +14,38 @@ import { Box, Input, Button, HStack, VStack, useToast } from "@chakra-ui/react";
 import {
   MapProps,
   ResetCenterViewProps,
-} from "@/shared/interfaces/map.interface";
-import { Mode } from "@/constants/enum";
-import { Location } from "@/shared/interfaces/location.interface";
-import { isLatLng } from "@/config/helper";
+} from "@/types/interfaces/map.interface";
+import { Mode } from "@/types/enums/enum";
+import { Location } from "@/types/interfaces/location.interface";
 import { FaMapMarker } from "react-icons/fa";
 import { renderToStaticMarkup } from "react-dom/server";
-
-const defaultPosition: LatLngExpression = [39.9334, 32.8597];
+import useMapLogic from "@/hooks/useMapLogic";
+import useLocationsContext from "../contexts/useLocationContext";
+import { colors } from "@/utils/colors";
+import { createRoutingControl } from "@/utils/helpers/map.helper";
+import { isLatLng } from "@/utils/helpers/type.helper";
 
 const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
-  const [position, setPosition] = useState<LatLngExpression | null>(null);
-  const [userPosition, setUserPosition] =
-    useState<LatLngExpression>(defaultPosition);
-  const [locationName, setLocationName] = useState("");
-  const [markerColor, setMarkerColor] = useState("#000000");
-  const [savedLocations, setSavedLocations] = useState<Location[]>([]);
-  const [initialLocationData, setInitialLocationData] =
-    useState<Location | null>(null);
+  const { saveLocation } = useLocationsContext();
+  const {
+    position,
+    setPosition,
+    userPosition,
+    locationName,
+    setLocationName,
+    markerColor,
+    setMarkerColor,
+    routeControl,
+    setRouteControl,
+  } = useMapLogic(mode, location);
+
   const toast = useToast();
   const iconSvg = renderToStaticMarkup(
-    <FaMapMarker size={30} color="#ff5722" />
+    <FaMapMarker size={30} color={colors.primary} />
   );
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setUserPosition([latitude, longitude]);
-      });
-    }
-
-    const storedLocations = localStorage.getItem("locations");
-    if (storedLocations) {
-      setSavedLocations(JSON.parse(storedLocations));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (mode === Mode.Edit && location) {
-      setPosition(location.position);
-      setLocationName(location.locationName);
-      setMarkerColor(location.markerColor);
-      setInitialLocationData(location);
-    }
-  }, [mode, location]);
 
   const LocationMarker = () => {
     const map = useMap();
-    const [routeControl, setRouteControl] = useState<L.Routing.Control | null>(
-      null
-    );
 
     useMapEvents({
       click(e) {
@@ -77,22 +58,15 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
     const handleMarkerClick = (loc: Location) => {
       if (routeControl) {
         map.removeControl(routeControl);
-        setRouteControl(null);
       }
 
-      const newRoute = L.Routing.control({
-        waypoints: [L.latLng(userPosition), L.latLng(loc.position)],
-        routeWhileDragging: true,
-        // createMarker: () => null, It solves the PNG bug in map view, but such a function does not appear to exist and prevents it from being deployed.
-        containerClassName: "leaflet-routing-container-custom",
-        lineOptions: {
-          extendToWaypoints: true,
-          missingRouteTolerance: 5,
-          styles: [{ color: loc.markerColor, weight: 5, opacity: 0.7 }],
-        },
-      }).addTo(map);
-
-      setRouteControl(newRoute);
+      createRoutingControl(
+        map,
+        userPosition,
+        loc.position,
+        loc.markerColor,
+        setRouteControl
+      );
     };
 
     return (
@@ -144,6 +118,7 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
             }
           />
         )}
+
         {mode === Mode.View && userPosition && (
           <Marker
             position={userPosition}
@@ -172,24 +147,16 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
     }
 
     const positionArray = position as [number, number];
-    const id = mode === Mode.Add ? uuidv4() : initialLocationData?.id || "";
+    const id = mode === Mode.Add ? uuidv4() : location?.id || "";
 
-    const locationData = {
+    const locationData: Location = {
       id,
       position: positionArray,
       locationName,
       markerColor,
     };
 
-    const updatedLocations =
-      mode === Mode.Edit
-        ? savedLocations.map((loc) =>
-            loc.id === location?.id ? locationData : loc
-          )
-        : [...savedLocations, locationData];
-
-    setSavedLocations(updatedLocations);
-    localStorage.setItem("locations", JSON.stringify(updatedLocations));
+    saveLocation(mode, locationData);
 
     toast({
       title: "Success",
@@ -203,7 +170,7 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
     });
 
     setLocationName("");
-    setMarkerColor("#000000");
+    setMarkerColor(colors.markerDefault);
     setPosition(null);
 
     if (onEdit) {
@@ -212,11 +179,11 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
   };
 
   const isSaveButtonDisabled = () => {
-    if (mode === Mode.Edit && initialLocationData) {
+    if (mode === Mode.Edit && location) {
       return (
-        position?.toString() === initialLocationData.position.toString() &&
-        locationName === initialLocationData.locationName &&
-        markerColor === initialLocationData.markerColor
+        position?.toString() === location.position.toString() &&
+        locationName === location.locationName &&
+        markerColor === location.markerColor
       );
     }
     return false;

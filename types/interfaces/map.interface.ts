@@ -1,4 +1,4 @@
-import { Mode } from "@/constants/enum";
+import { Mode } from "@/types/enums/enum";
 import { LatLngExpression } from "leaflet";
 import { Location } from "./location.interface";
 

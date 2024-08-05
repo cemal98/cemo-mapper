@@ -1,5 +1,3 @@
-const isClient = typeof window !== "undefined";
-
 // Navigation links
 export const navLinks = [
   {

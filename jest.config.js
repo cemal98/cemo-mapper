@@ -4,7 +4,7 @@ module.exports = {
   },
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
-    "^@/components/(.*)$": "<rootDir>/components/$1",
+    "^@/(.*)$": "<rootDir>/$1",
   },
   setupFilesAfterEnv: ["@testing-library/jest-dom"],
 };
