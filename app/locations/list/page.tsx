@@ -50,13 +50,7 @@ const LocationListPage = () => {
                 boxShadow="md"
               >
                 <Box fontSize="lg" fontWeight="bold">
-                  <Box
-                    display="flex"
-                    gap={3}
-                    className="h-[80px]"
-                    overflow="hidden"
-                    whiteSpace="nowrap"
-                  >
+                  <div className="h-[80px] flex overflow-hidden text-nowrap gap-1">
                     <Text flex="1" isTruncated>
                       {loc.locationName}
                     </Text>
@@ -89,7 +83,7 @@ const LocationListPage = () => {
                         cursor="pointer"
                       />
                     </Tooltip>
-                  </Box>
+                  </div>
                 </Box>
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   <Button
