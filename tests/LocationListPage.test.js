@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import LocationListPage from "@/app/locations/list/page";
 import "@testing-library/jest-dom";
 
-// Mock bileşenler ve yardımcı fonksiyonlar
 jest.mock("@/components/AddLocationAlert", () => () => (
   <div>Add Location Alert</div>
 ));
@@ -14,7 +13,6 @@ jest.mock("@/utils/helpers/color.helper", () => ({
 
 const mockDeleteLocation = jest.fn();
 
-// Mock Context API
 jest.mock("@/contexts/useLocationContext", () => {
   return {
     __esModule: true,
