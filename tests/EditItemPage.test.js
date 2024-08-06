@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import useLocationsContext from "../contexts/useLocationContext";
 import { useParams } from "next/navigation";
+import { COLORS } from "@/constants/index";
 
 jest.mock("@/components/Map", () => () => <div>DynamicMap Component</div>);
 
@@ -56,14 +57,14 @@ describe("EditItem", () => {
           id: "1",
           locationName: "Test Location",
           position: { lat: 0, lng: 0 },
-          markerColor: "#FF0000",
+          markerColor: COLORS.redMarker,
         },
       ],
       selectedLocation: {
         id: "1",
         locationName: "Test Location",
         position: { lat: 0, lng: 0 },
-        markerColor: "#FF0000",
+        markerColor: COLORS.redMarker,
       },
       setSelectedLocation: jest.fn(),
       updateLocation: jest.fn(),
@@ -91,14 +92,14 @@ describe("EditItem", () => {
           id: "1",
           locationName: "Test Location",
           position: { lat: 0, lng: 0 },
-          markerColor: "#FF0000",
+          markerColor: COLORS.redMarker,
         },
       ],
       selectedLocation: {
         id: "1",
         locationName: "Test Location",
         position: { lat: 0, lng: 0 },
-        markerColor: "#FF0000",
+        markerColor: COLORS.redMarker,
       },
       setSelectedLocation: jest.fn(),
       updateLocation: jest.fn(),

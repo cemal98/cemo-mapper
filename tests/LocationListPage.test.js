@@ -2,13 +2,14 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import LocationListPage from "@/app/locations/list/page";
 import "@testing-library/jest-dom";
+import { COLORS } from "@/constants/index";
 
 jest.mock("@/components/AddLocationAlert", () => () => (
   <div>Add Location Alert</div>
 ));
 
 jest.mock("@/utils/helpers/color.helper", () => ({
-  getContrastingColor: jest.fn(() => "#000000"),
+  getContrastingColor: jest.fn(),
 }));
 
 const mockDeleteLocation = jest.fn();
@@ -35,13 +36,13 @@ describe("LocationListPage", () => {
         {
           id: "1",
           locationName: "Location 1",
-          markerColor: "#ff0000",
+          markerColor: COLORS.redMarker,
           position: { lat: 40.7128, lng: -74.006 },
         },
         {
           id: "2",
           locationName: "Location 2",
-          markerColor: "#00ff00",
+          markerColor: COLORS.greenMarker,
           position: { lat: 34.0522, lng: -118.2437 },
         },
       ],
@@ -61,13 +62,13 @@ describe("LocationListPage", () => {
         {
           id: "1",
           locationName: "Location 1",
-          markerColor: "#ff0000",
+          markerColor: COLORS.redMarker,
           position: { lat: 40.7128, lng: -74.006 },
         },
         {
           id: "2",
           locationName: "Location 2",
-          markerColor: "#00ff00",
+          markerColor: COLORS.greenMarker,
           position: { lat: 34.0522, lng: -118.2437 },
         },
       ],

@@ -21,3 +21,11 @@ export const navLinks = [
     route: "/map",
   },
 ];
+
+// Colors
+export const COLORS = {
+  primary: "#ff5722",
+  markerDefault: "#000000",
+  redMarker: "#ff0000",
+  greenMarker: "#00ff00",
+};

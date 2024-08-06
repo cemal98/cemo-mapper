@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import EditLocationPage from "@/app/locations/edit/page";
 import useLocationsContext from "@/contexts/useLocationContext";
 import { getContrastingColor } from "@/utils/helpers/color.helper";
+import { COLORS } from "@/constants/index";
 
 jest.mock("@/components/Map", () => () => <div>Map Component</div>);
 jest.mock("@/components/AddLocationAlert", () => () => (
@@ -20,8 +21,12 @@ describe("EditLocationPage", () => {
   beforeEach(() => {
     useLocationsContext.mockReturnValue({
       locations: [
-        { id: "1", locationName: "Location 1", markerColor: "#ff0000" },
-        { id: "2", locationName: "Location 2", markerColor: "#00ff00" },
+        { id: "1", locationName: "Location 1", markerColor: COLORS.redMarker },
+        {
+          id: "2",
+          locationName: "Location 2",
+          markerColor: COLORS.greenMarker,
+        },
       ],
       selectedLocation: null,
       setSelectedLocation: jest.fn(),
@@ -53,12 +58,12 @@ describe("EditLocationPage", () => {
   it("should render DynamicMap when a location is selected", async () => {
     useLocationsContext.mockReturnValue({
       locations: [
-        { id: "1", locationName: "Location 1", markerColor: "#ff0000" },
+        { id: "1", locationName: "Location 1", markerColor: COLORS.redMarker },
       ],
       selectedLocation: {
         id: "1",
         locationName: "Location 1",
-        markerColor: "#ff0000",
+        markerColor: COLORS.redMarker,
       },
       setSelectedLocation: jest.fn(),
       updateLocation: jest.fn(),

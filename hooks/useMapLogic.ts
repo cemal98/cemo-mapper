@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import L, { LatLngExpression } from "leaflet";
-import { colors } from "@/utils/colors";
+import { COLORS } from "@/constants/index";
 import { Mode } from "@/types/enums/enum";
 
 const useMapLogic = (mode: string, location: any) => {
@@ -9,7 +9,7 @@ const useMapLogic = (mode: string, location: any) => {
     39.9334, 32.8597,
   ]);
   const [locationName, setLocationName] = useState("");
-  const [markerColor, setMarkerColor] = useState(colors.markerDefault);
+  const [markerColor, setMarkerColor] = useState(COLORS.markerDefault);
   const [routeControl, setRouteControl] = useState<L.Routing.Control | null>(
     null
   );

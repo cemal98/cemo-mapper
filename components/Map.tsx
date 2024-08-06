@@ -21,7 +21,7 @@ import { FaMapMarker } from "react-icons/fa";
 import { renderToStaticMarkup } from "react-dom/server";
 import useMapLogic from "@/hooks/useMapLogic";
 import useLocationsContext from "../contexts/useLocationContext";
-import { colors } from "@/utils/colors";
+import { COLORS } from "@/constants/index";
 import { createRoutingControl } from "@/utils/helpers/map.helper";
 import { isLatLng } from "@/utils/helpers/type.helper";
 
@@ -41,7 +41,7 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
 
   const toast = useToast();
   const iconSvg = renderToStaticMarkup(
-    <FaMapMarker size={30} color={colors.primary} />
+    <FaMapMarker size={30} color={COLORS.primary} />
   );
 
   const LocationMarker = () => {
@@ -170,7 +170,7 @@ const Map = ({ mode, location, onEdit, locations = [] }: MapProps) => {
     });
 
     setLocationName("");
-    setMarkerColor(colors.markerDefault);
+    setMarkerColor(COLORS.markerDefault);
     setPosition(null);
 
     if (onEdit) {
